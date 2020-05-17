@@ -5,57 +5,53 @@ package entidades;
  *
  * @author Angel
  */
-public class Clientes {
-    private Integer id;
-    private String codigo;
+public class Cliente {
+    private Integer idCliente;
+    private String codigoCliente ;
     private String empresa;
     private String contacto;
-    private String cargo_contacto;
+    private String cargoContacto;
     private String direccion;
     private String ciudad;
     private String region;
-    private String cp;
+    private String codigoPostal;
     private String pais;
-    private String telefono;
+    private String tlfno;
     private String fax;
 
-    public Clientes(Integer id, String codigo, String empresa, String contacto, String cargo_contacto, String direccion, String ciudad, String region, String cp, String pais, String telefono, String fax) {
-        this.id = id;
-        this.codigo = codigo;
+    public Cliente(Integer idCliente, String codigoCliente, String empresa, String contacto, String cargoContacto, String direccion, String ciudad, String region, String codigoPostal, String pais, String tlfno, String fax) {
+        this.idCliente = idCliente;
+        this.codigoCliente = codigoCliente;
         this.empresa = empresa;
         this.contacto = contacto;
-        this.cargo_contacto = cargo_contacto;
+        this.cargoContacto = cargoContacto;
         this.direccion = direccion;
         this.ciudad = ciudad;
         this.region = region;
-        this.cp = cp;
+        this.codigoPostal = codigoPostal;
         this.pais = pais;
-        this.telefono = telefono;
+        this.tlfno = tlfno;
         this.fax = fax;
     }
 
-    public Clientes() {
-        
+    public Cliente() {
+       
     }
 
-    public Clientes(int aInt, String string, String string0, String string1, String string2, String string3, String string4, int aInt0, String string5) {
-        
+    public Integer getIdCliente() {
+        return idCliente;
     }
 
-    public Integer getId() {
-        return id;
+    public void setIdCliente(Integer idCliente) {
+        this.idCliente = idCliente;
     }
 
-    public void setId(Integer id) {
-        this.id = id;
+    public String getCodigoCliente() {
+        return codigoCliente;
     }
 
-    public String getCodigo() {
-        return codigo;
-    }
-
-    public void setCodigo(String codigo) {
-        this.codigo = codigo;
+    public void setCodigoCliente(String codigoCliente) {
+        this.codigoCliente = codigoCliente;
     }
 
     public String getEmpresa() {
@@ -74,12 +70,12 @@ public class Clientes {
         this.contacto = contacto;
     }
 
-    public String getCargo_contacto() {
-        return cargo_contacto;
+    public String getCargoContacto() {
+        return cargoContacto;
     }
 
-    public void setCargo_contacto(String cargo_contacto) {
-        this.cargo_contacto = cargo_contacto;
+    public void setCargoContacto(String cargoContacto) {
+        this.cargoContacto = cargoContacto;
     }
 
     public String getDireccion() {
@@ -106,12 +102,12 @@ public class Clientes {
         this.region = region;
     }
 
-    public String getCp() {
-        return cp;
+    public String getCodigoPostal() {
+        return codigoPostal;
     }
 
-    public void setCp(String cp) {
-        this.cp = cp;
+    public void setCodigoPostal(String codigoPostal) {
+        this.codigoPostal = codigoPostal;
     }
 
     public String getPais() {
@@ -122,12 +118,12 @@ public class Clientes {
         this.pais = pais;
     }
 
-    public String getTelefono() {
-        return telefono;
+    public String getTlfno() {
+        return tlfno;
     }
 
-    public void setTelefono(String telefono) {
-        this.telefono = telefono;
+    public void setTlfno(String tlfno) {
+        this.tlfno = tlfno;
     }
 
     public String getFax() {
@@ -137,12 +133,12 @@ public class Clientes {
     public void setFax(String fax) {
         this.fax = fax;
     }
-    
-    
+
     @Override
     public String toString() {
-        return " " + id + " " + codigo + " " + empresa + " " + contacto + " " + cargo_contacto + " " + direccion + " " + ciudad + " " + region + " " + cp + " " + pais + " " + telefono + " " + fax;
+        return idCliente + "\t" + "\t"+ codigoCliente + "\t" +"\t"+ empresa + "\t" + "\t"+contacto + "\t" +"\t"+ cargoContacto ;
     }
     
+    
+    
 }
-

@@ -27,7 +27,7 @@ public class ClientesDAO {
             conexion = DriverManager.getConnection("jdbc:mysql://localhost:3306/neptuno", "root", "");
         } catch (SQLException ex) {
             System.err.println("Error al conectar: " + ex.getMessage());
-            //ex.printStackTrace(); //usarlo sólo cuando se hacen pruebas del programa ya que avisa de dónde se encuentra el problema
+            //ex.printStackTrace(); //usarlo sÃ³lo cuando se hacen pruebas del programa ya que avisa de dÃ³nde se encuentra el problema
         }
     }
     
@@ -122,7 +122,7 @@ public class ClientesDAO {
                     stmt.close();
                 }
             } catch (SQLException ex) {
-                System.err.println("Error al cerrar la conexión: " + ex.getMessage());
+                System.err.println("Error al cerrar la conexiÃ³n: " + ex.getMessage());
             }
         }
 
@@ -168,7 +168,7 @@ public class ClientesDAO {
                     stmt.close();
                 }
             } catch (SQLException ex) {
-                System.err.println("Error al cerrar la conexión: " + ex.getMessage());
+                System.err.println("Error al cerrar la conexiÃ³n: " + ex.getMessage());
             }
         }
 

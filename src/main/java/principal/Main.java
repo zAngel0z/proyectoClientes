@@ -1,261 +1,347 @@
 
 package principal;
 
-import dao.ClientesDAO;
-import entidades.Clientes;
-import java.util.Scanner;
 
 /**
  *
  * @author Angel
  */
+import entidades.Cliente;
+import clientesDAO.ClientesDao;
+import java.util.InputMismatchException;
+import java.util.Scanner;
 public class Main {
-    
-    
-    static Scanner sc = new Scanner(System.in, "ISO-8859-1");
-    static ClientesDAO clientes = new ClientesDAO();
+
+    /**
+     * @param args the command line arguments
+     */
     
     public static void main(String[] args) {
-        Integer opcion = null;
-
-        if (clientes.getConexion() == null) {
-            System.err.println("Programa terminado. Error en la conexión.");
-            System.exit(1);
-        }
         
-            System.out.println("\t\tBIENVENIDO");
-        System.out.println("\t\t-----------");
-        while (true) {
-            try {
-                System.out.println("ELIJA ALGUNA DE LAS OPCIONES QUE SE MUESTRAN A CONTINUACIÓN\n");
-                System.out.println("  1. Buscar datos de clientes.");
-                System.out.println("  2. Insertar datos de un cliente.");
-                System.out.println("  3. Actualizar datos de un cliente.");
-                System.out.println("  4. Eliminar datos de un cliente.\n");
-                System.out.print("Su elección [introduzca 0 para salir]: ");
-                opcion = Integer.parseInt(sc.nextLine());
+        Cliente cliente = new Cliente();
+        ClientesDao clientes = new ClientesDao();
+        
+        System.out.println("Estos son los 10 primeros clientes:");
+        mostrarSiguientes(0);
+        
 
-                switch (opcion) {
-                    case 0:
-                        System.out.println("\nHasta pronto.\n");
-                        System.out.println("\t    -------------");
-                        System.out.println("\t\tFIN\n");
-                        System.exit(0);
-                        break;
-                    case 1:
-                        System.out.println("\nBÚSQUEDA");
-                        System.out.println("--------");
-                        buscarCliente();
-                        break;
-                    case 2:
-                        System.out.println("\nINSERCIÓN");
-                        System.out.println("---------");
-                        introducirCliente();
-                        break;
-                    case 3:
-                        System.out.println("\nACTUALIZAR");
-                        System.out.println("----------");
-                        actualizarCliente();
-                        break;
-                    case 4:
-                        System.out.println("\nBORRADO");
-                        System.out.println("-------");
-                        borrarCliente();
-                        break;
-                    default:
-                        System.out.println("\nIntroduzca alguna de las opciones válidas.");
+        mostrarMenu();
+        
+    }
+    
+    
+    
+    public static void mostrarMenu(){
+        boolean parar = false;
+        Integer siguientes = 0;
+        
+        while(!parar){
+            Scanner in = new Scanner(System.in);
+            
+            System.out.println();
+            System.out.println("\t"+"****MENU****");
+            System.out.println("=========================================");
+            System.out.println("1- Mostrar los 10 siguientes");
+            System.out.println("2- Mostrar los 10 anteriores");
+            System.out.println("3- Mostrar un cliente por ID");
+            System.out.println("4- Si desea aÃ±adir un cliente");
+            System.out.println("5- Si desea eliminar un cliente");
+            System.out.println("6- Si desea actualizar un cliente");
+            System.out.println("-----------------------------------------");
+            System.out.println("7- Para volver a mostrar los 10 primeros");
+            System.out.println("8- Para mostrar los 10 ultimos");
+            System.out.println("-----------------------------------------");
+            System.out.println("0- Si desea SALIR del menu");
+            System.out.println("=========================================");
+            int eleccion=0;
+            
+            while(true){
+                try{
+                     String opcion = in.nextLine();
+                     eleccion = Integer.parseInt(opcion);
+                     break;
+                }catch(NumberFormatException e){
+                    System.out.println("Introduce solo numeros.\n Vuelve a introducir la opcion:");
                 }
-                System.out.println();
-            } catch (NumberFormatException nfe) {
-                System.err.println("\nError: Entrada no válida." + nfe.getMessage() + "\n");
+            }
+            
+            switch(eleccion){
+                case 1:
+                    siguientes+=10;
+                    mostrarSiguientes(siguientes);
+                    break;
+                case 2:
+                    if(siguientes==0){
+                        System.out.println("No hay menos clientes");
+                    }else{
+                    siguientes-=10;
+                    mostrarSiguientes(siguientes);
+                    }
+                    break;
+                case 3:
+                    readCliente();
+                    break;
+                    
+                case 4:
+                    introducirCliente();
+                    break;
+                case 5:
+                    eliminarCliente();
+                    break;
+                case 6:
+                    actualizarCliente();
+                    break;
+                case 7:
+                    mostrarSiguientes(0);
+                    break;
+                case 8:
+                    mostrarUltimos();
+                    break;
+                case 0:
+                    System.out.println("Saliendo del menu...");
+                    parar = true;
+                    break;
+                
+                default:
+                    System.out.println("Introduce los numeros permitidos:");
             }
         }
-        
     }
-    public static Clientes existeCliente() {
-        Clientes cliente = null;
-
-        System.out.print("Indique el ID del cliente que desea buscar: ");
-        cliente = clientes.read(Integer.parseInt(sc.nextLine()));
-
+    
+    
+    public static void mostrarSiguientes(Integer siguientes){
+        Cliente cliente = new Cliente();
+        ClientesDao clientes = new ClientesDao();
+        
+        System.out.println("Visualizando los 10 siguientes Clientes");
+        System.out.println("id  Codigo      Empresa\t\t\t\t\tContacto\t\t\tCargoContacto");
+        System.out.println();
+        for(Cliente e: clientes.listarClientes(siguientes)){
+            System.out.printf("%03d %-6s %-40s %-30s %-30s\n",e.getIdCliente(), e.getCodigoCliente(), e.getEmpresa(), e.getContacto(), e.getCargoContacto());
+        }
+    }
+    
+    public static Integer comprobar(Integer siguientes){
+        Cliente cliente = new Cliente();
+        ClientesDao clientes = new ClientesDao();
+        if(siguientes==0){
+            siguientes=80;
+        }else{
+            siguientes-=10;
+        }
+        return siguientes;
+    }
+    
+    public static Cliente existe(){
+        Cliente cliente = null;
+        ClientesDao clientes = new ClientesDao();
+        Scanner in = new Scanner(System.in);
+        
+        System.out.println("Indique el id del cliente que desea: ");
+        Integer idDeseado = in.nextInt();
+        cliente = clientes.read(idDeseado);
         return cliente;
+        
     }
     
-     public static void buscarCliente() {
-        Clientes cliente = existeCliente();
-
-        if (cliente != null) {
+    
+    public static void readCliente(){
+        Cliente cliente = existe();
+        ClientesDao clientes = new ClientesDao();
+        Scanner in = new Scanner(System.in);
+        
+        System.out.println();
+        if(cliente==null){
+            System.out.println("El cliente seleccionado no existe.");
+        }else{
+            System.out.println("El cliente que ha seleccionado es: ");
             System.out.println(cliente.toString());
-        } else {
-            System.err.println("El cliente no existe o no se puede leer.");
         }
     }
     
-     public static void introducirCliente() {
-        Clientes cliente = new Clientes();
-
-        System.out.print("Indique el ID del cliente: ");
-        cliente.setId(Integer.parseInt(sc.nextLine()));
-
-        System.out.print("Indique el código del cliente: ");
-        cliente.setCodigo(sc.nextLine());
-
-        System.out.print("Indique la empresa del cliente: ");
-        cliente.setEmpresa(sc.nextLine());
-
-        System.out.print("Indique el contacto del cliente: ");
-        cliente.setContacto(sc.nextLine());
-
-        System.out.print("Indique el cargo del cliente: ");
-        cliente.setCargo_contacto(sc.nextLine());
-
-        System.out.print("Indique la dirección del cliente: ");
-        cliente.setDireccion(sc.nextLine());
-
-        System.out.print("Indique la ciudad del cliente: ");
-        cliente.setCiudad((sc.nextLine()));
-
-        System.out.print("Indique la región del cliente: ");
-        cliente.setRegion(sc.nextLine());
+    public static void introducirCliente(){
+        Scanner in = new Scanner(System.in);
+        Cliente cliente = new Cliente();
+        ClientesDao clientes = new ClientesDao();
         
-        System.out.print("Indique el código postal del cliente: ");
-        cliente.setCp(sc.nextLine());
+        System.out.println("Indique el CÃ³digo de Cliente");
+        cliente.setCodigoCliente(in.nextLine());
         
-        System.out.print("Indique el País del cliente: ");
-        cliente.setPais(sc.nextLine());
+        System.out.println("Indique el nombre de la Empresa");
+        cliente.setEmpresa(in.nextLine());
         
-        System.out.print("Indique el teléfono del cliente: ");
-        cliente.setTelefono(sc.nextLine());
+        System.out.println("Indique el Contacto");
+        cliente.setContacto(in.nextLine());
         
-        System.out.print("Indique el fax del cliente: ");
-        cliente.setFax(sc.nextLine());
-
-
-        if (clientes.insert(cliente)) {
-            System.out.println("El cliente '" + cliente.getId() + " " + cliente.getCodigo()
-                    + " " + cliente.getEmpresa() + "" + cliente.getContacto()+ "" +cliente.getCargo_contacto() + "" + cliente.getDireccion() + "" + cliente.getCiudad() + "" + cliente.getRegion()+ "" + cliente.getCp() + "" + cliente.getPais() 
-                            + "" + cliente.getTelefono() + "" + cliente.getFax()+ "' ha sido añadido satisfactoriamente.");
-        } else {
-            System.err.println("El cliente que intenta introducir no es válido.\n");
+        System.out.println("Indique el Cargo del contacto");
+        cliente.setCargoContacto(in.nextLine());
+        
+        System.out.println("Indique la direcciÃ³n");
+        cliente.setDireccion(in.nextLine());
+        
+        System.out.println("Indique la ciudad");
+        cliente.setCiudad(in.nextLine());
+        
+        System.out.println("Indique la RegiÃ³n");
+        cliente.setRegion(in.nextLine());
+        
+        System.out.println("Indique el CÃ³digo Postal");
+        cliente.setCodigoPostal(in.nextLine());
+        
+        System.out.println("Indique el PaÃ­s");
+        cliente.setPais(in.nextLine());
+        
+        System.out.println("Indiue un TelÃ©fono de contacto");
+        cliente.setTlfno(in.nextLine());
+        
+        System.out.println("Indique un NÃºmero de FAX");
+        cliente.setFax(in.nextLine());
+        
+        if(clientes.insert(cliente)){
+            System.out.println("El cliente con nombre de empresa: "+cliente.getEmpresa()+" y Contacto: "+cliente.getContacto()+" ha sido aÃ±adido");
+            
+        }else{
+            System.out.println("El Cliente introducido no es vÃ¡lido.");
         }
+        
     }
     
-    public static void actualizarCliente() {
-        Clientes cliente = existeCliente();
-
-        if (cliente == null) {
-            System.err.println("El cliente no existe o no se puede leer.");
+    public static void eliminarCliente(){
+         Scanner in = new Scanner(System.in);
+         Cliente cliente = existe();
+         ClientesDao clientes = new ClientesDao();
+         
+         String respuesta = "";
+         
+         if(cliente==null){
+             System.out.println("El Cliente seleccionado no existe.");
+         }else{
+             clientes.delete(cliente.getIdCliente());
+             System.out.println("El cliente ha sido eliminado .");
+         }
+         
+    }
+    
+    public static void actualizarCliente(){
+        Scanner in = new Scanner(System.in);
+        Cliente cliente = existe();
+        ClientesDao clientes = new ClientesDao();
+        if(cliente == null){
+            System.out.println("El cliente no existe o no se puede leer");
             return;
         }
-
-        while (true) {
-            try {
-                System.out.println("\n" + cliente);
-
-                Integer opcion;
-
-                System.out.println("\nELIJA ALGUNA DE LAS OPCIONES QUE SE MUESTRAN A CONTINUACIÓN\n");
-                System.out.println("  1. ID.");
-                System.out.println("  2. Código.");
-                System.out.println("  3. Empresa.");
-                System.out.println("  4. Contacto.");
-                System.out.println("  5. Cargo_contacto.");
-                System.out.println("  6. Dirección.");
-                System.out.println("  7. Ciudad.");
-                System.out.println("  8. Región.");
-                System.out.println("  9. Código Postal .");
-                System.out.println("  10. País .");
-                System.out.println("  11. Teléfono .");
-                System.out.println("  12. Fax.");
+        
+        while(true){
+            try{
+                System.out.println();
+                System.out.println("El cliente que ha elegido es: "+cliente.toString());
                 
-                System.out.print("\nSu elección [introduzca 0 para retroceder]: ");
-                opcion = Integer.parseInt(sc.nextLine());
-
-                if (opcion > 0 && opcion < 13) {
-                    System.out.print("\nIntroduzca la modificación que desea realizar: ");
+                Integer eleccion=0;
+                
+                System.out.println("En el siguiente menu, elija la opcion que desee...");
+                System.out.println("\t"+"****MENU****");
+                System.out.println("-----------------------------------------------------");
+                System.out.println("1- Cambiar el Codigo de Cliente(no confundir con ID)");
+                System.out.println("2- Cambiar el nombre de la Empresa");
+                System.out.println("3- Cambiar el nombre del contacto");
+                System.out.println("4- Cambiar el cargo del contacto");
+                System.out.println("5- Cambiar la direccion");
+                System.out.println("6- Cambiar la ciudad");
+                System.out.println("7- Cambiar la region");
+                System.out.println("8- Cambiar el Codigo Postal");
+                System.out.println("9- Cambiar el pais");
+                System.out.println("10- Cambiar el Telefono de contacto");
+                System.out.println("11- Cambiar el fax");
+                System.out.println("----------------------------------------------------");
+                System.out.println("0- Para salir del MENU");
+                System.out.println("----------------------------------------------------");
+                
+               
+                
+                while(true){
+                    try{
+                         String opcion = in.nextLine();
+                         eleccion = Integer.parseInt(opcion);
+                         break;
+                    }catch(NumberFormatException e){
+                        System.out.println("Introduce solo numeros.\n Vuelve a introducir la opcion:");
+                    }
                 }
-
-                switch (opcion) {
-                    case 0:
-                        return;
+                
+                
+                
+                
+                if(eleccion>0 && eleccion<12){
+                    System.out.print("Introduzca la modificacion: ");
+                }
+                switch(eleccion){
                     case 1:
-                        cliente.setId(Integer.parseInt(sc.nextLine()));
+                        cliente.setCodigoCliente(in.next());
                         clientes.update(cliente);
                         break;
                     case 2:
-                        cliente.setCodigo(sc.nextLine());
+                        cliente.setEmpresa(in.next());
                         clientes.update(cliente);
                         break;
                     case 3:
-                        cliente.setEmpresa(sc.nextLine());
+                        cliente.setContacto(in.next());
                         clientes.update(cliente);
                         break;
                     case 4:
-                        cliente.setContacto(sc.nextLine());
+                        cliente.setCargoContacto(in.next());
                         clientes.update(cliente);
                         break;
                     case 5:
-                        cliente.setCargo_contacto(sc.nextLine());
+                        cliente.setDireccion(in.next());
                         clientes.update(cliente);
                         break;
                     case 6:
-                        cliente.setDireccion(sc.nextLine());
+                        cliente.setCiudad(in.next());
                         clientes.update(cliente);
                         break;
                     case 7:
-                        cliente.setCiudad(sc.nextLine());
+                        cliente.setRegion(in.next());
                         clientes.update(cliente);
                         break;
                     case 8:
-                        cliente.setRegion(sc.nextLine());
+                        cliente.setCodigoPostal(in.next());
                         clientes.update(cliente);
                         break;
                     case 9:
-                        cliente.setCp(sc.nextLine());
+                        cliente.setPais(in.next());
                         clientes.update(cliente);
                         break;
                     case 10:
-                        cliente.setPais(sc.nextLine());
+                        cliente.setTlfno(in.next());
                         clientes.update(cliente);
                         break;
                     case 11:
-                        cliente.setTelefono(sc.nextLine());
-                        clientes.update(cliente);
-                        break;                      
-                    case 12:
-                        cliente.setFax(sc.nextLine());
+                        cliente.setFax(in.next());
                         clientes.update(cliente);
                         break;
+                    case 0:
+                        return;
                     default:
-                        System.out.println("\nIntroduzca alguna de las opciones válidas.\n");
+                        System.out.println("Introduce solo los numeros permitidos:");
+                        break;
                 }
-            } catch (NumberFormatException nfe) {
-                System.err.println("\nError: " + nfe.getMessage() + "\n");
+                
+            }catch(NumberFormatException e){
+                System.out.println("Introduce numeros:");
+                
             }
         }
     }
-     
-     public static void borrarCliente() {
-        Clientes cliente = existeCliente();
-        String resp = null;
-
-        if (cliente != null) {
-                System.out.println("\n¿Está seguro que desea eliminar al siguiente usuario?"
-                        + "\n  " + cliente);
-                System.out.print("Su respuesta [Y/N]: ");
-                resp = sc.nextLine();
-                
-                if (resp.equalsIgnoreCase("y")) {
-                    clientes.delete(cliente.getId());
-                    System.out.println("Entrada eliminada.");
-                } else {
-                    System.out.println("Entrada no eliminada.");
-                }
-        } else {
-            System.err.println("El cliente no existe o no se puede leer.");
+    
+    public static void mostrarUltimos(){
+        Cliente cliente = new Cliente();
+        ClientesDao clientes = new ClientesDao();
+        
+        System.out.println("Visualizando los 10 ULTIMOS Clientes");
+        System.out.println("id  Codigo      Empresa\t\t\t\t\tContacto\t\t\tCargoContacto");
+        System.out.println();
+        for(Cliente e: clientes.listarUltimos()){
+            System.out.printf("%03d %-6s %-40s %-30s %-30s\n",e.getIdCliente(), e.getCodigoCliente(), e.getEmpresa(), e.getContacto(), e.getCargoContacto());
         }
     }
-     
-     
-    
 }
